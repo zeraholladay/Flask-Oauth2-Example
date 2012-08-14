@@ -1,0 +1,20 @@
+#!/bin/bash
+
+DEV_CFG='dev.cfg'
+
+function deploy
+{
+    echo 'Deploy'
+}
+
+function foreman
+{
+    env APP_CONFIG=$DEV_CFG foreman start
+}
+
+function run
+{
+    env APP_CONFIG=$DEV_CFG python app.py
+}
+
+run
