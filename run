@@ -2,9 +2,9 @@
 
 DEV_CFG='dev.cfg'
 
-function deploy
+function install
 {
-    echo 'Deploy'
+    pip install -r requirements.txt
 }
 
 function foreman
@@ -12,9 +12,9 @@ function foreman
     env APP_CONFIG=$DEV_CFG foreman start
 }
 
-function run
+function runserver
 {
     env APP_CONFIG=$DEV_CFG python app.py
 }
 
-run
+eval $BASH_ARGV
