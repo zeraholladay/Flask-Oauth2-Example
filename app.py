@@ -2,7 +2,7 @@ from flask import (Flask, redirect, url_for, session, render_template,
                    request, make_response)
 from flask.ext.login import (LoginManager, login_user, logout_user, login_required,
                              current_user)
-from flaskext.oauth import OAuth
+from flask.ext.oauth import OAuth
 from json import dumps, loads
 import requests
 import os
