@@ -45,7 +45,13 @@ def load_user(user_id):
  
 @app.route('/')
 def index():
-    return current_user.name #render_template('index.html')
+    try:
+        return """
+        You are: %s<br>
+        <a href="%s">Logout</a>
+        """ % ( current_user.name, url_for('logout') )
+    except AttributeError: # AnonymousUser doesn't have name.
+        return """<a href="%s">Login</a>""" % url_for('login_google')
 
 @app.route('/login/google')
 def login_google():
