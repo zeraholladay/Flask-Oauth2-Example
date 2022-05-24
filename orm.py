@@ -8,20 +8,20 @@ metadata = MetaData(engine)
 user = Table('users', metadata,
              Column('id', Integer(), primary_key=True, nullable=False),
              Column('oauth_id', String()),
-             Column('name', String()),
+             Column('email', String()),
              Column('active', Boolean(), default=True),
     )
 
 class User(object):
-    def __init__(self, oauth_id, name):
+    def __init__(self, oauth_id, email):
         self.oauth_id = oauth_id
-        self.name = name
+        self.email = email
 
     def is_authenticated(self):
         return True
 
     def is_active(self):
-        return self.active;
+        return self.active
 
     def is_anonymous(self):
         return False
@@ -39,7 +39,7 @@ class User(object):
 
     @staticmethod
     def add(**data):
-        user = User(data['id'], data['name'])
+        user = User(data['id'], data['email'])
         session.add(user)
         session.commit()
         return user
@@ -52,8 +52,8 @@ session = Session()
 metadata.create_all()
 
 if __name__ == '__main__':
-    ed_user = User('8675309', 'ed', 'Ed Jones')
+    ed_user = User('8675309', 'ed', 'ed.jones@gmail.com')
     session.add(ed_user)
     session.commit()
     user = session.query(User).filter_by(oauth_id='8675309').one()
-    print user.name
+    print(user.name)

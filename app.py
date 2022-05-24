@@ -1,9 +1,9 @@
 from flask import (Flask, redirect, url_for, session, render_template,
                    request, make_response)
-from flask.ext.login import (LoginManager, login_user, logout_user, login_required,
+from flask_login import (LoginManager, login_user, logout_user, login_required,
                              current_user)
-from flask.ext.oauth import OAuth
-from json import dumps, loads
+from flask_oauthlib.client import OAuth
+from json import loads
 import requests
 import os
 
@@ -14,23 +14,24 @@ app = Flask(__name__)
 # import config from $APP_CONFIG file
 
 app.config.from_envvar('APP_CONFIG') 
-app.secret_key = app.config['SECRET_KEY']
+# app.secret_key = app.config['SECRET_KEY']
 
 # google oauth2 setup
 
 oauth = OAuth()
-google = oauth.remote_app('google',
-                          base_url='https://www.google.com/accounts/',
-                          authorize_url='https://accounts.google.com/o/oauth2/auth',
-                          request_token_url=None,
-                          request_token_params= {'scope': 'https://www.googleapis.com/auth/userinfo.email \
-                          https://www.googleapis.com/auth/userinfo.profile',
-                                                 'response_type': 'code'},
-                          access_token_url='https://accounts.google.com/o/oauth2/token',
-                          access_token_method='POST',
-                          access_token_params={'grant_type': 'authorization_code'},
-                          consumer_key=app.config['GOOGLE_CLIENT_ID'],
-                          consumer_secret=app.config['GOOGLE_CLIENT_SECRET'])
+google = oauth.remote_app(
+    'google',
+    consumer_key=app.config.get('GOOGLE_CLIENT_ID'),
+    consumer_secret=app.config.get('GOOGLE_CLIENT_SECRET'),
+    request_token_params={
+        'scope': 'email'
+    },
+    base_url='https://www.googleapis.com/oauth2/v1/',
+    request_token_url=None,
+    access_token_method='POST',
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+)
 # login manager
 
 login_manager = LoginManager()
@@ -49,8 +50,8 @@ def index():
         return """
         You are: %s<br>
         <a href="%s">Logout</a>
-        """ % ( current_user.name, url_for('logout') )
-    except AttributeError: # AnonymousUser doesn't have name.
+        """ % ( current_user.email, url_for('logout') )
+    except AttributeError: # AnonymousUser doesn't have email.
         return """<a href="%s">Login</a>""" % url_for('login_google')
 
 @app.route('/login/google')
